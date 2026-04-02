@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   ) ?? { order_count: 0, total_spend: 0 }
 
   const recentOrders = await query<RecentOrder>(
-    'SELECT order_id, order_datetime, order_total FROM orders WHERE customer_id = ? ORDER BY order_datetime DESC LIMIT 5',
+    'SELECT order_id, order_datetime::text AS order_datetime, order_total FROM orders WHERE customer_id = ? ORDER BY order_datetime DESC LIMIT 5',
     [customer.customer_id]
   )
 

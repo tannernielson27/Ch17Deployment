@@ -11,7 +11,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ or
   const { order_id } = await params
 
   const order = await queryOne<Order>(
-    'SELECT order_id, order_datetime, order_total, customer_id FROM orders WHERE order_id = ?',
+    'SELECT order_id, order_datetime::text AS order_datetime, order_total, customer_id FROM orders WHERE order_id = ?',
     [order_id]
   )
   if (!order) notFound()

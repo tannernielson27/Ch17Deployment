@@ -29,9 +29,9 @@ export default async function PriorityQueuePage({
     total = Number(countRow?.total ?? 0)
 
     rows = await query<PriorityRow>(`
-      SELECT o.order_id, o.order_datetime, o.order_total,
+      SELECT o.order_id, o.order_datetime::text AS order_datetime, o.order_total,
         c.full_name AS customer_name,
-        p.late_delivery_probability, p.predicted_late_delivery, p.prediction_timestamp
+        p.late_delivery_probability, p.predicted_late_delivery, p.prediction_timestamp::text AS prediction_timestamp
       FROM orders o
       JOIN customers c ON c.customer_id = o.customer_id
       JOIN order_predictions p ON p.order_id = o.order_id

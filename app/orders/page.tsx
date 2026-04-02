@@ -23,7 +23,7 @@ export default async function OrdersPage({
   const total = Number(countRow?.total ?? 0)
 
   const orders = await query<Order>(
-    'SELECT order_id, order_datetime, order_total FROM orders WHERE customer_id = ? ORDER BY order_datetime DESC LIMIT ? OFFSET ?',
+    'SELECT order_id, order_datetime::text AS order_datetime, order_total FROM orders WHERE customer_id = ? ORDER BY order_datetime DESC LIMIT ? OFFSET ?',
     [customer.customer_id, PAGE_SIZE, offset]
   )
 

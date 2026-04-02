@@ -36,11 +36,18 @@ export async function POST() {
       }
     })
 
-    proc.on('error', (err) => {
+    proc.on('error', (err: NodeJS.ErrnoException) => {
+      const isNotFound = err.code === 'ENOENT'
       resolve(
         NextResponse.json(
-          { ok: false, error: err.message, timestamp: new Date().toISOString() },
-          { status: 500 }
+          {
+            ok: false,
+            error: isNotFound
+              ? 'Python is not available in this environment. Run the scoring job locally with DATABASE_URL set.'
+              : err.message,
+            timestamp: new Date().toISOString(),
+          },
+          { status: isNotFound ? 503 : 500 }
         )
       )
     })

@@ -13,10 +13,15 @@ export async function getSelectedCustomer(): Promise<Customer | null> {
   const id = cookieStore.get('customer_id')?.value
   if (!id) return null
 
-  return await queryOne<Customer>(
-    'SELECT customer_id, full_name, email FROM customers WHERE customer_id = $1',
-    [id]
-  ) ?? null
+  try {
+    return await queryOne<Customer>(
+      'SELECT customer_id, full_name, email FROM customers WHERE customer_id = $1',
+      [id]
+    ) ?? null
+  } catch {
+    // DB not yet connected (e.g. DATABASE_URL not set) — degrade gracefully
+    return null
+  }
 }
 
 export async function requireCustomer(): Promise<Customer> {

@@ -6,6 +6,7 @@ import Link from 'next/link'
 interface ScoringResult {
   ok: boolean; scored?: number; timestamp?: string
   stdout?: string; stderr?: string; error?: string
+  envError?: boolean
 }
 
 export default function ScoringPage() {
@@ -17,7 +18,8 @@ export default function ScoringPage() {
     setResult(null)
     try {
       const res = await fetch('/api/run-scoring', { method: 'POST' })
-      setResult(await res.json())
+      const data = await res.json()
+      setResult({ ...data, envError: res.status === 503 })
     } catch {
       setResult({ ok: false, error: 'Network error — could not reach server.' })
     } finally {
@@ -47,7 +49,7 @@ export default function ScoringPage() {
         {running ? 'Running...' : 'Run Scoring Job'}
       </button>
 
-      {result && (
+      {result && !result.envError && (
         <div className={`border rounded-xl p-5 text-sm ${result.ok ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
           <p className={`font-semibold mb-3 ${result.ok ? 'text-emerald-700' : 'text-red-700'}`}>
             {result.ok ? 'Complete' : 'Failed'}
